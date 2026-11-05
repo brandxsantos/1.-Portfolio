@@ -2,8 +2,47 @@ const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#primary-nav');
 const themeToggle = document.querySelector('.theme-toggle');
 const currentYear = document.querySelector('#current-year');
+const contactForm = document.querySelector('#contact-form');
+const formStatus = document.querySelector('#form-status');
 
 currentYear.textContent = new Date().getFullYear();
+
+contactForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const submitButton = contactForm.querySelector('.submit-button');
+    const endpoint = contactForm.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+
+    submitButton.disabled = true;
+    formStatus.classList.remove('is-error');
+    formStatus.textContent = 'Sending your message...';
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(Object.fromEntries(new FormData(contactForm)))
+        });
+        const result = await response.json();
+
+        if (!response.ok || result.success === false || result.success === 'false') {
+            throw new Error(result.message || 'Please try again in a moment.');
+        }
+
+        formStatus.textContent = 'Thanks—your message has been sent. I’ll get back to you soon.';
+        contactForm.reset();
+    } catch (error) {
+        formStatus.classList.add('is-error');
+        formStatus.textContent = error instanceof Error
+            ? `Sorry, your message could not be sent. ${error.message}`
+            : 'Sorry, your message could not be sent. Please try again.';
+    } finally {
+        submitButton.disabled = false;
+    }
+});
 
 menuToggle.addEventListener('click', () => {
     const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
