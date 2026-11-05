@@ -7,39 +7,15 @@ const formStatus = document.querySelector('#form-status');
 
 currentYear.textContent = new Date().getFullYear();
 
-contactForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
+if (new URLSearchParams(window.location.search).get('contact') === 'sent') {
+    formStatus.textContent = 'Thanks—your message has been sent. I’ll get back to you soon.';
+}
 
+contactForm.addEventListener('submit', () => {
     const submitButton = contactForm.querySelector('.submit-button');
     submitButton.disabled = true;
     formStatus.classList.remove('is-error');
     formStatus.textContent = 'Sending your message...';
-
-    try {
-        const response = await fetch(contactForm.action, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            },
-            body: JSON.stringify(Object.fromEntries(new FormData(contactForm)))
-        });
-        const result = await response.json();
-
-        if (!response.ok || result.success !== true) {
-            throw new Error(typeof result.message === 'string' ? result.message : 'Please try again in a moment.');
-        }
-
-        formStatus.textContent = 'Thanks—your message has been sent. I’ll get back to you soon.';
-        contactForm.reset();
-    } catch (error) {
-        formStatus.classList.add('is-error');
-        formStatus.textContent = error instanceof Error
-            ? `Sorry, your message could not be sent. ${error.message}`
-            : 'Sorry, your message could not be sent. Please try again.';
-    } finally {
-        submitButton.disabled = false;
-    }
 });
 
 menuToggle.addEventListener('click', () => {
