@@ -1,6 +1,5 @@
 const menuToggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#primary-nav');
-const themeToggle = document.querySelector('.theme-toggle');
 const currentYear = document.querySelector('#current-year');
 const contactForm = document.querySelector('#contact-form');
 const formStatus = document.querySelector('#form-status');
@@ -165,9 +164,4 @@ navigation.querySelectorAll('a').forEach((link) => {
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.setAttribute('aria-label', 'Open navigation');
     });
-});
-
-themeToggle.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('dark-theme');
-    themeToggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
 });
