@@ -11,14 +11,12 @@ contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const submitButton = contactForm.querySelector('.submit-button');
-    const endpoint = contactForm.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
-
     submitButton.disabled = true;
     formStatus.classList.remove('is-error');
     formStatus.textContent = 'Sending your message...';
 
     try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(contactForm.action, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,8 +26,8 @@ contactForm.addEventListener('submit', async (event) => {
         });
         const result = await response.json();
 
-        if (!response.ok || result.success === false || result.success === 'false') {
-            throw new Error(result.message || 'Please try again in a moment.');
+        if (!response.ok || result.success !== true) {
+            throw new Error(typeof result.message === 'string' ? result.message : 'Please try again in a moment.');
         }
 
         formStatus.textContent = 'Thanks—your message has been sent. I’ll get back to you soon.';
